@@ -4,15 +4,44 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "tb_student")
 public class Student {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "student_seq")
+	@SequenceGenerator(name = "student_seq", sequenceName = "sq_student", initialValue = 1, allocationSize = 1)
 	private Long id;
+	
+	@Column(name = "code", nullable = false, unique = true)
 	private String code;
+	
+	@Column(name = "name", nullable = false)
 	private String name;
+	
+	@OneToOne(mappedBy = "student")
 	private Registration registration;
+	
+	@ManyToMany( cascade = {CascadeType.ALL})
+	@JoinTable(
+			name = "tb_student_computer",
+			joinColumns = {@JoinColumn(name = "id_student_fk")},
+			inverseJoinColumns = {@JoinColumn(name = "id_computer_fk")}
+			)
 	private Set<Computer> computers;
 	
 	public Student(Long id, String code, String name, Registration registration) {
@@ -23,7 +52,9 @@ public class Student {
 		this.computers = new HashSet<>();
 	}
 	
-	public Student() {}
+	public Student() {
+		this.computers = new HashSet<>();
+	}
 
 	public Long getId() {
 		return id;

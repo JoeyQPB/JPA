@@ -3,14 +3,49 @@ package br.com.joey.domain;
 import java.time.Instant;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tb_registration")
 public class Registration {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "registration_seq")
+	@SequenceGenerator(name = "registration_seq", sequenceName = "sq_registration", initialValue = 1, allocationSize = 1)
 	private Long id;
+	
+	@Column(name = "code", nullable = false, unique = true)
 	private String code;
+	
+	@Column(name = "registrationDate", nullable = false)
 	private Instant registrationDate;
+	
+	@Column(name = "price", nullable = false)
 	private Double price;
+	
+	@Column(name = "status", nullable = false)
 	private String status;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_course_fk",
+				foreignKey = @ForeignKey(name = "fk_course_registration"),
+				referencedColumnName = "id", nullable = false)
 	private Course course;
+	
+	@OneToOne
+	@JoinColumn(name = "id_student_fk",
+				foreignKey = @ForeignKey(name = "fk_student_registration"),
+				referencedColumnName = "id", nullable = false)
 	private Student student;
 	
 	public Registration(Long id, String code, Instant registrationDate, Double price, String status, Course course, Student student) {

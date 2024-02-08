@@ -1,24 +1,48 @@
 package br.com.joey.domain;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Computer {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import br.com.joey.interfaces.IPersistence;
+
+@Entity
+@Table(name = "tb_computer")
+public class Computer implements IPersistence {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "computer_seq")
+	@SequenceGenerator(name = "computer_seq", sequenceName = "sq_computer", initialValue = 1, allocationSize = 1)
 	private Long id;
+	
+	@Column(name = "code", nullable = false, unique = true)
 	private String code;
+	
+	@Column(name = "description", nullable = false)
 	private String description;
+	
+	@ManyToMany(mappedBy = "computers")
 	private Set<Student> students;
 	
-	public Computer(Long id, String code, String description, Set<Student> students) {
-		super();
+	public Computer(Long id, String code, String description) {
 		this.id = id;
 		this.code = code;
 		this.description = description;
-		this.students = students;
+		this.students = new HashSet<>();
 	}
 	
-	public Computer() {}
+	public Computer() {
+		this.students = new HashSet<>();
+	}
 
 	public Long getId() {
 		return id;
